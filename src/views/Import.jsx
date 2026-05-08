@@ -1,4 +1,6 @@
 import { useState, useRef } from 'react'
+import { BriefingPanel, DecisionCard, ModeNote } from './InsightPrimitives.jsx'
+import PageHeader from '../components/PageHeader.jsx'
 
 const REQUIRED_COLUMNS = {
   patients:    ['patient_id','procedure','admission_date','or_duration_min','neak_reimbursement_huf','total_cost_huf','status'],
@@ -54,7 +56,7 @@ function download(type) {
   URL.revokeObjectURL(url)
 }
 
-export default function Import() {
+export default function Import({ audienceMode }) {
   const [result, setResult] = useState(null)
   const ref = useRef()
 
@@ -73,9 +75,40 @@ export default function Import() {
 
   return (
     <>
-      <div className="section-header">
-        <h2>Import Hospital Data</h2>
-        <p>Upload CSV exports from CT-Ecostat or Medworks. Columns are validated before loading.</p>
+      <PageHeader
+        kicker="Data operations"
+        title="Import Hospital Data"
+        description="Upload CSV exports from CT-Ecostat or Medworks. Columns are validated before loading."
+      />
+
+      <ModeNote
+        audienceMode={audienceMode}
+        executiveText="Showing the intake process as a simple readiness workflow."
+        analystText="Showing templates, detected columns, validation warnings, and parsed row counts."
+      />
+
+      <div className="decision-grid">
+        <DecisionCard
+          tone="blue"
+          label="Step 1"
+          value="CSV"
+          title="Export data"
+          body="Use CT-Ecostat, Medworks, or procurement exports with the expected column headers."
+        />
+        <DecisionCard
+          tone="teal"
+          label="Step 2"
+          value="Validate"
+          title="Check structure"
+          body="The import layer detects file type, required columns, numeric fields, and date formatting."
+        />
+        <DecisionCard
+          tone="amber"
+          label="Step 3"
+          value="Review"
+          title="Resolve issues"
+          body="Warnings and missing columns are shown before any operational dashboard update."
+        />
       </div>
 
       <div
@@ -84,8 +117,10 @@ export default function Import() {
         onDragOver={e => e.preventDefault()}
         onDrop={e => { e.preventDefault(); handleFile(e.dataTransfer.files[0]) }}
       >
-        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{margin:'0 auto 10px',display:'block',color:'#94A3B8'}}>
-          <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+        <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+          <polyline points="17 8 12 3 7 8"/>
+          <line x1="12" y1="3" x2="12" y2="15"/>
         </svg>
         <h3>Drop CSV file here or click to browse</h3>
         <p>CT-Ecostat exports, Medworks patient data, procurement records</p>
@@ -116,7 +151,7 @@ export default function Import() {
 
       <div className="chart-card" style={{marginBottom:18}}>
         <div className="chart-title">Data Templates</div>
-        <div className="chart-sub">Download and fill these with your actual CT-Ecostat or Medworks exports.</div>
+        <div className="chart-sub">Download and fill these with actual CT-Ecostat or Medworks exports.</div>
         <div className="template-grid">
           {['patients','procurement','budget'].map(type => (
             <div key={type} className="template-block">
@@ -130,16 +165,12 @@ export default function Import() {
         </div>
       </div>
 
-      <div className="alert alert-blue">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-        </svg>
-        <div>
-          <strong>Data systems confirmed in Hungarian hospitals:</strong>
-          CT-Ecostat (government financial system), Medworks IHS, Labworks (diagnostics), MIRA (operating rooms).
-          All export to Excel or CSV. NEAK reimbursement data is available at department level per the data analyst interview conducted April 2025.
-        </div>
-      </div>
+      <BriefingPanel
+        tone="blue"
+        eyebrow="Confirmed source systems"
+        title="The model is designed around exports hospitals already have."
+        body="CT-Ecostat, Medworks IHS, Labworks, and MIRA can export Excel or CSV. NEAK reimbursement data is available at department level per the data analyst interview conducted April 2025."
+      />
     </>
   )
 }

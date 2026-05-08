@@ -1,4 +1,7 @@
 import { useState } from 'react'
+import { DecisionCard, ModeNote } from './InsightPrimitives.jsx'
+import PageHeader from '../components/PageHeader.jsx'
+import SectionTabs from '../components/SectionTabs.jsx'
 
 const SECTIONS = [
   { id:'summary',    label:'Executive Summary'       },
@@ -11,27 +14,51 @@ const SECTIONS = [
   { id:'references', label:'References'              },
 ]
 
-export default function Documentation() {
+export default function Documentation({ audienceMode }) {
   const [active, setActive] = useState('summary')
 
   return (
     <>
-      <div className="section-header">
-        <h2>Methodology and Documentation</h2>
-        <p>
-          Technical description of data model, KPI calculations, and source citations.
-          All metrics in this dashboard are computable from standard hospital information system exports.
-        </p>
+      <PageHeader
+        kicker="Evidence layer"
+        title="Methodology and Documentation"
+        description="Technical description of data model, KPI calculations, and source citations. All metrics in this dashboard are computable from standard hospital information system exports."
+      />
+
+      <ModeNote
+        audienceMode={audienceMode}
+        executiveText="Showing the documentation as a credibility layer for buyers, hospital leaders, and procurement stakeholders."
+        analystText="Showing formulas, calibration assumptions, source references, and model limitations for technical review."
+      />
+
+      <div className="decision-grid">
+        <DecisionCard
+          tone="blue"
+          label="Model"
+          value="3"
+          title="Core datasets"
+          body="Budget, patient journey, and procurement data form the minimum viable intelligence layer."
+        />
+        <DecisionCard
+          tone="teal"
+          label="Privacy"
+          value="0"
+          title="Personal identifiers"
+          body="The patient journey layer uses anonymised records and excludes names or clinical records."
+        />
+        <DecisionCard
+          tone="amber"
+          label="Review"
+          value="8"
+          title="Method sections"
+          body="The methodology view keeps assumptions, formulas, references, and limitations explicit."
+        />
       </div>
 
       <div className="doc-layout">
         <div className="doc-toc">
           <h4>Contents</h4>
-          {SECTIONS.map(s => (
-            <div key={s.id} className={`toc-item${active===s.id?' active':''}`} onClick={() => setActive(s.id)}>
-              {s.label}
-            </div>
-          ))}
+          <SectionTabs items={SECTIONS} active={active} onChange={setActive} className="doc-tabs" />
         </div>
 
         <div className="doc-body">
