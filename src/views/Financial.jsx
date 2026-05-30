@@ -80,7 +80,7 @@ export default function Financial({ audienceMode }) {
       {!analyst && (
         <BriefingPanel
           tone="red"
-          eyebrow="Executive readout"
+          eyebrow="Overview readout"
           title="The finance issue is not simply overspend. It is reimbursement mismatch."
           body="Leadership should use the charts below to separate controllable operating variance from reimbursement design. Arthroscopy is the clearest place to start because the deficit is procedure-specific and repeatable."
         />
@@ -133,7 +133,7 @@ export default function Financial({ audienceMode }) {
                 {BUDGET.map((b, i) => (
                   <Cell
                     key={i}
-                    fill={b.util > 110 ? '#EF4444' : b.util > 100 ? '#F59E0B' : '#38BDF8'}
+                    fill={b.util > 110 ? '#EF4444' : b.util > 100 ? '#F59E0B' : '#74C985'}
                     fillOpacity={0.9}
                   />
                 ))}
@@ -165,7 +165,7 @@ export default function Financial({ audienceMode }) {
                   name === 'avg_cost' ? 'Avg Cost' : 'NEAK Reimb.',
                 ]}
               />
-              <Bar dataKey="avg_cost" name="avg_cost" fill="#38BDF8" radius={[2,2,0,0]} />
+              <Bar dataKey="avg_cost" name="avg_cost" fill="#74C985" radius={[2,2,0,0]} />
               <Bar dataKey="avg_neak" name="avg_neak" fill="rgba(15,118,110,0.78)" radius={[2,2,0,0]} />
             </BarChart>
           </ResponsiveContainer>

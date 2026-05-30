@@ -31,8 +31,8 @@ export default function Contact() {
           <span className="page-kicker">Availability</span>
           <h2>Demo and collaboration</h2>
           <p>
-            The current contact links are intentionally simple. Social links are placeholders and can
-            be replaced with the team's real profiles later.
+            Use this page for demo access, feedback, hospital operations conversations,
+            procurement analytics questions, or collaboration with the Elessar team.
           </p>
         </GlassCard>
       </div>

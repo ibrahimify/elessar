@@ -1,241 +1,194 @@
-# Elessar Hospital Analytics Platform
+# Elessar - Hospital Analytics Platform
 
-Elessar is a hospital analytics dashboard built for the Hungarian public healthcare context. It helps demonstrate how hospital leaders and analysts can connect financial, procurement, and patient journey data to identify reimbursement gaps, cost pressure, procurement variance, and operational inefficiencies.
+Elessar is a hospital intelligence dashboard for procurement, finance, and patient journey analysis in public healthcare. The current demo is scoped to the Orthopaedics department for fiscal year 2024 and uses synthetic data calibrated against public Semmelweis University Hospital reporting.
 
-The current version is a frontend demo focused on an Orthopaedics department for the 2024 fiscal year. It uses a synthetic dataset calibrated against public healthcare finance references and hospital-style export structures.
+Team: Elessar
 
-## Table of Contents
+## What This Project Is
 
-- [Overview](#overview)
-- [Key Features](#key-features)
-- [Data Source and Backend Status](#data-source-and-backend-status)
-- [Tech Stack](#tech-stack)
-- [Getting Started](#getting-started)
-- [Available Scripts](#available-scripts)
-- [Project Structure](#project-structure)
-- [Data Model](#data-model)
-- [Demo Insights](#demo-insights)
-- [Methodology](#methodology)
-- [Team](#team)
-- [Contact and Data Reuse](#contact-and-data-reuse)
+This repository contains a single-page React application that turns hospital exports into decision-ready analytics. It is designed for two audiences:
 
-## Overview
+- Executive Mode for leadership and non-technical stakeholders
+- Analyst Mode for controllers, procurement teams, and implementation users who need exact values and methodology
 
-Elessar is designed as a decision-support interface for hospital operations. The dashboard translates operational exports into executive and analyst views, making it easier to understand where money is lost, where procurement can be improved, and which procedures carry the highest financial risk.
+The app includes:
 
-The product is structured around three analytics areas:
-
-| Area | Purpose |
-| --- | --- |
-| Financial analytics | Compare departmental spend, approved budgets, and NEAK reimbursement coverage. |
-| Patient journey costing | Show procedure-level cost attribution across departments and reimbursement outcomes. |
-| Procurement analytics | Detect SKU fragmentation, contracted-price variance, urgent orders, and MDR compliance risks. |
-
-## Key Features
-
-- Executive and analyst dashboard modes.
-- Overview page with high-level hospital performance indicators.
-- Financial view for monthly budget utilization and NEAK reimbursement gaps.
-- Procurement view for supplier, SKU, price variance, fragmentation, and compliance analysis.
-- Patient journey view for procedure-level cost breakdowns.
-- CSV import screen with browser-side template validation.
-- Documentation view explaining assumptions, formulas, and methodology.
-- GitHub Pages deployment workflow included in `.github/workflows/deploy-pages.yml`.
-
-## Data Source and Backend Status
-
-There is currently no live backend connected to this repository.
-
-The demo data comes from the local frontend file:
-
-```text
-src/data.js
-```
-
-Dashboard pages import that dataset directly at build time. The application does not currently use an API server, database, cloud storage, authentication service, or backend persistence layer.
-
-The CSV import page validates files in the browser only. It can detect file type, required columns, numeric fields, and formatting issues, but uploaded files are not saved or sent to a server.
+- Budget vs NEAK reimbursement analysis
+- Procedure and patient journey costing
+- Procurement and SKU fragmentation analysis
+- CSV import and validation for hospital exports
+- Documentation and methodology views
 
 ## Tech Stack
 
-### Frontend
+| Area | Technology | Used For |
+|---|---|---|
+| Frontend framework | React 18 | UI composition, state, routing, view rendering |
+| Build tool | Vite | Local development server, production builds, fast refresh |
+| Routing | React Router DOM | Page navigation and audience mode routing |
+| Charts | Recharts | Budget, procedure, coverage, and procurement visualizations |
+| Icons | lucide-react | Lightweight UI icons |
+| Styling | Custom CSS in `src/App.css` | Visual system, layout, responsiveness, animations |
 
-| Technology | Use |
-| --- | --- |
-| React 18 | Component-based user interface |
-| React Router DOM | Client-side routing |
-| Recharts | Dashboard charts and data visualizations |
-| Lucide React | Interface icons |
-| CSS | Global styling, responsive layout, and visual system |
+## Architecture
 
-### Tooling and Build
+This project is frontend-only.
 
-| Technology | Use |
-| --- | --- |
-| Vite | Local development server and production build |
-| npm | Dependency management and scripts |
-| Node.js | JavaScript runtime |
-| GitHub Actions | Static deployment workflow for GitHub Pages |
+- Frontend source is in `src/`
+- There is no backend service, API server, database layer, or external data-fetching logic in this repository
+- The data model is embedded locally in `src/data.js`
+- CSV import is handled entirely in the browser with the FileReader API
 
-### Data Layer
+The repository models external hospital systems as source labels only:
 
-| Technology | Use |
-| --- | --- |
-| Local JavaScript modules | Embedded demo dataset in `src/data.js` |
-| Browser FileReader API | Local CSV parsing and validation in the import screen |
-| Static build output | Deployable frontend assets in `dist/` |
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js 16 or newer
-- npm 8 or newer
-
-### Installation
-
-```bash
-npm install
-```
-
-### Run Locally
-
-```bash
-npm run dev
-```
-
-The Vite development server usually opens at:
-
-```text
-http://localhost:5173
-```
-
-### Production Build
-
-```bash
-npm run build
-```
-
-### Preview Production Build
-
-```bash
-npm run preview
-```
-
-## Available Scripts
-
-| Command | Description |
-| --- | --- |
-| `npm run dev` | Starts the local Vite development server. |
-| `npm run build` | Creates a production-ready static build in `dist/`. |
-| `npm run preview` | Serves the production build locally for review. |
+- CT-Ecostat for finance, budget, and procurement exports
+- Medworks IHS for patient and procedure exports
+- Labworks for supporting clinical data references
+- NEAK reimbursement as the funding reference model
 
 ## Project Structure
 
 ```text
 elessar/
-|-- .github/
-|   `-- workflows/
-|       `-- deploy-pages.yml
-|-- documentation/
-|   `-- Elessar_Methodology.docx
-|-- public/
-|   `-- favicon.svg
-|-- src/
-|   |-- components/
-|   |   |-- AppShell.jsx
-|   |   |-- DataTable.jsx
-|   |   |-- MetricCard.jsx
-|   |   |-- Sidebar.jsx
-|   |   `-- TopBar.jsx
-|   |-- pages/
-|   |   |-- About.jsx
-|   |   |-- Contact.jsx
-|   |   |-- ModeSelection.jsx
-|   |   |-- Team.jsx
-|   |   `-- WhatWeDo.jsx
-|   |-- views/
-|   |   |-- Documentation.jsx
-|   |   |-- Financial.jsx
-|   |   |-- Import.jsx
-|   |   |-- Overview.jsx
-|   |   |-- Patients.jsx
-|   |   `-- Procurement.jsx
-|   |-- App.css
-|   |-- App.jsx
-|   |-- data.js
-|   `-- main.jsx
-|-- index.html
-|-- package.json
-|-- package-lock.json
-|-- README.md
-`-- vite.config.js
+├── index.html                Application entry HTML
+├── package.json              Scripts and dependencies
+├── README.md                 Project documentation
+├── vite.config.js            Vite configuration
+├── public/                   Static public assets
+├── documentation/            Extended methodology documentation
+└── src/
+    ├── main.jsx              React entry point and router bootstrap
+    ├── App.jsx               Route definitions and audience mode state
+    ├── App.css               Global styling and UI system
+    ├── data.js               Synthetic dataset and KPI constants
+    ├── components/           Shared UI components
+    │   ├── AppShell.jsx
+    │   ├── Sidebar.jsx
+    │   ├── TopBar.jsx
+    │   ├── PageHeader.jsx
+    │   ├── GlassCard.jsx
+    │   ├── MetricCard.jsx
+    │   ├── DataTable.jsx
+    │   ├── ChartContainer.jsx
+    │   └── other reusable panels and controls
+    ├── pages/                Static information pages
+    │   ├── ModeSelection.jsx
+    │   ├── About.jsx
+    │   ├── WhatWeDo.jsx
+    │   ├── Team.jsx
+    │   └── Contact.jsx
+    └── views/                Analytical views and dashboard pages
+        ├── Overview.jsx
+        ├── Financial.jsx
+        ├── Procurement.jsx
+        ├── Patients.jsx
+        ├── Import.jsx
+        ├── Documentation.jsx
+        └── InsightPrimitives.jsx
 ```
 
-Note: generated folders such as `node_modules/` and `dist/` are intentionally excluded from the structure above.
+## Core Data Model
 
-## Data Model
+The application is built around three operational data layers:
 
-The dashboard is designed around data that hospitals can typically export from existing internal systems.
+| Layer | Purpose | Example Metrics |
+|---|---|---|
+| Budget vs NEAK | Tracks monthly funding coverage | Coverage ratio, monthly deficit, budget utilization |
+| Patient journey | Attributes costs to completed procedures | Cost per case, OR delay, deficit cases |
+| Procurement / SKU | Surfaces supply chain leakage | Purchase price variance, expiry waste, fragmentation, MDR exposure |
 
-| Dataset | Example Source System | Example Fields |
-| --- | --- | --- |
-| Budget and reimbursement | CT-Ecostat | Month, department, approved budget, actual spend, NEAK reimbursement |
-| Patient journey cost | Medworks IHS and finance exports | Procedure, OR duration, department cost, total cost, reimbursement |
-| Procurement and inventory | CT-Ecostat inventory module | SKU, supplier, contracted price, actual price, quantity, urgent orders, MDR status |
+The synthetic dataset is calibrated to public 2024 Semmelweis University Hospital reporting and uses anonymous patient IDs only. No personal clinical records are stored in this repository.
 
-## Demo Insights
+## KPIs In The Demo
 
-The bundled dataset currently demonstrates:
+The main KPI constants are defined in `src/data.js` and drive the dashboard views.
 
-- Annual NEAK gap: -108,561,600 HUF.
-- Total annual spend: 496,755,120 HUF.
-- Total NEAK reimbursement: 388,193,960 HUF.
-- Deficit cases: 28 out of 123.
-- Expiry waste: 93,493,000 HUF.
-- SKUs over contracted price: 22 out of 37.
-- Fragmented SKU groups: 7.
-- Estimated SKU consolidation potential: 90,371,760 HUF.
-
-## Methodology
-
-The synthetic demo dataset is calibrated using public healthcare finance references and hospital-style operating assumptions. It is intended for demonstration and validation, not as a live institutional dataset.
-
-Supporting methodology is available in:
-
-```text
-documentation/Elessar_Methodology.docx
-```
-
-The in-app Documentation page also explains calculation logic, assumptions, formulas, and data readiness requirements.
-
-## Current Limitations
-
-- No backend API is implemented.
-- No database is connected.
-- No authentication or user management is included.
-- CSV imports are validated locally but not persisted.
-- Demo values should not be treated as real hospital operating records.
+| KPI | Value |
+|---|---:|
+| Annual NEAK gap | -108,561,600 HUF |
+| Total spend | 496,755,120 HUF |
+| Total NEAK reimbursement | 388,193,960 HUF |
+| Deficit cases | 28 |
+| Total cases | 123 |
+| Cancellation rate | 18.0% |
+| Expiry waste | 93,493,000 HUF |
+| Urgent orders | 119 |
+| SKUs above contract | 22 |
+| Total SKUs | 37 |
+| Non-MDR items | 10 |
+| Average OR delay | 8.0 minutes |
+| Fragmented product groups | 7 |
+| Estimated fragmentation saving | 90,371,760 HUF |
 
 ## Team
 
-| Role | Name | Institution / Focus |
-| --- | --- | --- |
-| CEO | Szabolcs Albert | EDUTUS |
-| CTO and Developer | Muhammad Ibrahim Shoeb | BME, technical build, data, cybersecurity |
-| Project Manager | Jawad Bin Jahangir | University of Debrecen |
-| Mentor | Márton Kis | Healthcare innovation and digitalization |
+The team page in `src/pages/Team.jsx` lists the following members:
 
-## Contact and Data Reuse
+- Szabolcs Albert
+- Muhammad Ibrahim Shoeb
+- Jawad Bin Jahangir
+- Márton Kis, Mentor
 
-This project was developed by Muhammad Ibrahim Shoeb.
+Primary technical ownership is attributed to Muhammad Ibrahim Shoeb.
 
-For permission to reuse the dataset, questions about the methodology, or any issue related to this repository, please contact:
+Contact:
 
-| Channel | Details |
-| --- | --- |
-| Email | `muhammadibrahimshoeb@gmail.com` |
-| GitHub | [github.com/ibrahimify](https://github.com/ibrahimify) |
-| LinkedIn | [linkedin.com/in/ibrahimify](https://linkedin.com/in/ibrahimify) |
+- Email: muhammadibrahimshoeb@gmail.com
 
-Please request permission before reusing the demo data, methodology, or project materials outside their intended presentation and evaluation context.
+- GitHub: @ibrahimify
+
+If you want to reuse this data, adapt the dataset, or contribute to the project, ask permission from Ibrahim first.
+
+## Getting Started
+
+Requirements:
+
+- Node.js 18 or newer
+- npm 8 or newer
+
+Install dependencies and start the development server:
+
+```bash
+npm install
+npm run dev
+```
+
+Open the app at the local Vite address shown in the terminal, usually `http://localhost:5173`.
+
+## Production Build
+
+```bash
+npm run build
+```
+
+To preview the production build locally:
+
+```bash
+npm run preview
+```
+
+## Where The Frontend Data Comes From
+
+All visible analytics are generated from local source files:
+
+- `src/data.js` contains the synthetic budget, patient, and procurement datasets
+- `src/views/Overview.jsx` and the other view files transform those datasets into charts and KPIs
+- `src/views/Import.jsx` accepts CSV uploads and validates them in-browser
+
+No backend fetch, REST API, or server endpoint is required for the current demo.
+
+## Methodology And Documentation
+
+The repository includes a dedicated documentation view and an additional Word document under `documentation/` for deeper technical explanation. These materials cover:
+
+- KPI formulas
+- Data calibration methodology
+- Source-system mapping
+- Limitations of the synthetic demo model
+
+## Notes For Contributors
+
+- Keep changes aligned with the current React and Vite architecture
+- Preserve the synthetic and anonymised nature of the dataset
+- Do not reuse or redistribute the data without approval from Ibrahim
+- Update the methodology notes if KPI definitions or source mappings change

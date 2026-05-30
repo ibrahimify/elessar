@@ -10,7 +10,7 @@ import ChartContainer from '../components/ChartContainer.jsx'
 const fmt = (n) => new Intl.NumberFormat('hu-HU').format(Math.round(n))
 const fmtM = (n) => (n / 1000000).toFixed(1) + 'M'
 
-const COLORS = ['#38BDF8', '#0F766E', '#F59E0B', '#64748B', '#EF4444']
+const COLORS = ['#74C985', '#257F4A', '#F59E0B', '#64748B', '#EF4444']
 
 const CustomTooltipBudget = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null
@@ -41,29 +41,37 @@ const CustomTooltipLine = ({ active, payload, label }) => {
 
 export default function Overview({ audienceMode }) {
   const analyst = audienceMode === 'analyst'
+  const assetBase = import.meta.env.BASE_URL
 
   return (
     <>
       <PageHeader
         kicker="Hospital command layer"
-        title="Executive Overview"
+        title={analyst ? 'Analyst View' : 'Overview View'}
         description="Orthopaedics department / Full year 2024 / Sources: NEAK DRG model, P4H Hungary Hospital Debt Report, HST 2024 SOTI Report, Kaplan and Porter HBR 2011."
       />
 
       <section className="hero-panel">
         <div className="hero-content">
-          <div className="hero-eyebrow">Critical fiscal signal</div>
-          <h1>Orthopaedics is operating below reimbursement coverage every month.</h1>
+          <div className="hero-eyebrow">{analyst ? 'Critical vulnerability signal' : 'Leadership book of accounts'}</div>
+          <h1>
+            {analyst
+              ? 'Coverage variance, spend leakage, and procedure vulnerability need the technical layer.'
+              : 'Revenue, expenses, and trend pressure in one calm operating view.'}
+          </h1>
           <p>
-            NEAK reimbursement covered only 78.2% of actual costs on average. The issue is not
-            one bad month. It is a structural coverage gap hidden across procedures, operating room
-            time, and procurement leakage.
+            {analyst
+              ? 'The analyst view keeps the full evidence layer visible: monthly coverage, procedure-level deficit, supplier leakage, and cross-department cost attribution.'
+              : 'Leadership can read the position quickly: NEAK reimbursement is behind actual spend, Q4 pressure increased, and the next review should focus on controllable expenses.'}
           </p>
         </div>
         <div className="hero-metric">
-          <span>2024 NEAK gap</span>
-          <strong>-75,926,179 HUF</strong>
-          <small>Hospital leadership action required</small>
+          <img src={`${assetBase}elessar-gem.svg`} alt="" aria-hidden="true" className="hero-gem" />
+          <div className="hero-metric-copy">
+            <span>2024 NEAK gap</span>
+            <strong>-75,926,179 HUF</strong>
+            <small>Hospital leadership action required</small>
+          </div>
         </div>
       </section>
 
@@ -78,8 +86,8 @@ export default function Overview({ audienceMode }) {
 
       <ModeNote
         audienceMode={audienceMode}
-        executiveText="Plain-language layer is active. Focus is on risk, impact, and what leadership should do next."
-        analystText="Analyst layer is active. Charts expose the underlying monthly coverage, procedure variance, and attribution model."
+        executiveText="Overview layer is active. Focus is on book of accounts, trends, revenue, expenses, and the next leadership action."
+        analystText="Analyst layer is active. Charts expose vulnerabilities, spending leakage, monthly coverage, procedure variance, and attribution model."
       />
 
       <div className="decision-grid">
@@ -136,7 +144,7 @@ export default function Overview({ audienceMode }) {
       {!analyst && (
         <BriefingPanel
           tone="blue"
-          eyebrow="Executive interpretation"
+          eyebrow="Overview interpretation"
           title="The dashboard turns a budget problem into three controllable workstreams."
           body="Hospital leadership should use this view to ask which procedures lose money, which supplier categories leak contract value, and which month-end trends need intervention before the next reporting cycle."
         >
@@ -152,9 +160,34 @@ export default function Overview({ audienceMode }) {
         <BriefingPanel
           tone="slate"
           eyebrow="Analyst interpretation"
-          title="Coverage, procedure deficit, and cross-department attribution are linked views of the same problem."
-          body="The charts below retain the original model inputs and expose where monthly reimbursement, procedure mix, and department-level cost allocation diverge."
+          title="Coverage, procedure deficit, supplier leakage, and cross-department attribution are linked views of the same problem."
+          body="The charts below retain the original model inputs and expose where monthly reimbursement, procedure mix, procurement variance, and department-level cost allocation diverge."
         />
+      )}
+
+      {!analyst && (
+        <div className="overview-ledger">
+          <div className="ledger-item">
+            <span>Book of accounts</span>
+            <strong>Revenue versus expense</strong>
+            <p>Monthly NEAK reimbursement is reviewed against actual orthopaedics spend.</p>
+          </div>
+          <div className="ledger-item">
+            <span>Trend</span>
+            <strong>Q4 pressure</strong>
+            <p>November and December are the months leadership should discuss first.</p>
+          </div>
+          <div className="ledger-item">
+            <span>Revenue</span>
+            <strong>NEAK received</strong>
+            <p>Coverage is below the target operating ratio across the fiscal year.</p>
+          </div>
+          <div className="ledger-item">
+            <span>Expenses</span>
+            <strong>Actual spend</strong>
+            <p>Expense pressure is visible before drilling into procedure and supplier detail.</p>
+          </div>
+        </div>
       )}
 
       <div className="chart-grid">
@@ -174,13 +207,14 @@ export default function Overview({ audienceMode }) {
               <XAxis dataKey="month" tick={{ fontSize: 10 }} tickLine={false} axisLine={false} />
               <YAxis tickFormatter={fmtM} tick={{ fontSize: 10 }} tickLine={false} axisLine={false} />
               <Tooltip content={<CustomTooltipBudget />} />
-              <Bar dataKey="spend" name="Actual Spend" fill="#38BDF8" radius={[2,2,0,0]} />
+              <Bar dataKey="spend" name="Actual Spend" fill="#74C985" radius={[2,2,0,0]} />
               <Bar dataKey="neak"  name="NEAK Received" fill="rgba(239,68,68,0.72)" radius={[2,2,0,0]} />
             </BarChart>
           </ResponsiveContainer>
         </ChartContainer>
 
-        <div className="chart-card">
+        {analyst ? (
+          <div className="chart-card">
           <div className="chart-title">Procedure Deficit Rate</div>
           <div className="chart-sub">
             Arthroscopy is the dominant loss pocket. NEAK pays materially below average case cost.
@@ -201,10 +235,25 @@ export default function Overview({ audienceMode }) {
               </Bar>
             </BarChart>
           </ResponsiveContainer>
-        </div>
+          </div>
+        ) : (
+          <div className="chart-card leadership-readout">
+            <span>Read in under three minutes</span>
+            <h3>What leadership should take from this page</h3>
+            <p>
+              The operating story is simple: revenue is not keeping pace with actual cost,
+              Q4 pressure is visible, and the next meeting should separate controllable
+              expense actions from reimbursement negotiation topics.
+            </p>
+            <div className="leadership-readout-list">
+              <strong>Next action</strong>
+              <span>Review expense pressure, Q4 trend, and funding gap before opening the analyst layer.</span>
+            </div>
+          </div>
+        )}
       </div>
 
-      <div className="chart-grid">
+      {analyst && <div className="chart-grid">
         <div className="chart-card">
           <div className="chart-title">Revenue Coverage Ratio by Month</div>
           <div className="chart-sub">
@@ -220,9 +269,9 @@ export default function Overview({ audienceMode }) {
                 type="monotone"
                 dataKey="coverage"
                 name="Coverage Ratio"
-                stroke="#38BDF8"
+                stroke="#74C985"
                 strokeWidth={2.5}
-                dot={{ r: 4, fill: '#38BDF8' }}
+                dot={{ r: 4, fill: '#74C985' }}
                 activeDot={{ r: 6 }}
               />
               <Line
@@ -271,7 +320,7 @@ export default function Overview({ audienceMode }) {
             </PieChart>
           </ResponsiveContainer>
         </div>
-      </div>
+      </div>}
     </>
   )
 }

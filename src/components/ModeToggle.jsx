@@ -1,12 +1,12 @@
 export default function ModeToggle({ audienceMode, setAudienceMode, className = '' }) {
   return (
-    <div className={`mode-toggle ${className}`} aria-label="Audience mode">
+    <div className={`mode-toggle ${className}`} aria-label="View lens">
       <button
-        type="button"
-        className={audienceMode === 'executive' ? 'active' : ''}
-        onClick={() => setAudienceMode('executive')}
-      >
-        Executive
+          type="button"
+          className={audienceMode === 'executive' ? 'active' : ''}
+          onClick={() => setAudienceMode('executive')}
+        >
+        Overview
       </button>
       <button
         type="button"

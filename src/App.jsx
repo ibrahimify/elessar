@@ -12,6 +12,8 @@ import About from './pages/About.jsx'
 import WhatWeDo from './pages/WhatWeDo.jsx'
 import Team from './pages/Team.jsx'
 import Contact from './pages/Contact.jsx'
+import ModulePage from './pages/ModulePage.jsx'
+import { MODULE_PAGES } from './modulePages.js'
 
 export default function App() {
   const [audienceMode, setAudienceMode] = useState('executive')
@@ -30,6 +32,13 @@ export default function App() {
         <Route path="/what-we-do" element={<WhatWeDo />} />
         <Route path="/team" element={<Team />} />
         <Route path="/contact" element={<Contact />} />
+        {MODULE_PAGES.map((page) => (
+          <Route
+            key={page.path}
+            path={page.path}
+            element={<ModulePage page={page} audienceMode={audienceMode} />}
+          />
+        ))}
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

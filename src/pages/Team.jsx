@@ -24,7 +24,7 @@ const members = [
     name: 'Jawad Bin Jahangir',
     institution: 'University of Debrecen',
     avatar: 'JJ',
-    tags: ['AI', 'Cybersecurity', 'Fintech', 'Sport', 'Marketing'],
+    tags: ['AI', 'Cybersecurity', 'Sport', 'Marketing'],
     body: 'Jawad is a 2nd year BSc Computer Science student from Bangladesh, currently studying at the University of Debrecen. He is a passionate coder with experience in Python, SQL, JavaScript, Flask for backend work, and React for frontend development. He also brings strong communication skills for teamwork and growth.',
   },
   {

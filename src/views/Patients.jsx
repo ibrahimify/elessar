@@ -102,7 +102,7 @@ export default function Patients({ audienceMode }) {
         <>
           <BriefingPanel
             tone="blue"
-            eyebrow="Executive interpretation"
+            eyebrow="Overview interpretation"
             title="Patient journeys explain why the department-level gap exists."
             body="Instead of asking whether Orthopaedics is over budget, leadership can now ask which procedures and support departments produce negative case economics."
           />

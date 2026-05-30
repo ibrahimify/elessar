@@ -4,7 +4,7 @@ import PageHeader from '../components/PageHeader.jsx'
 import SectionTabs from '../components/SectionTabs.jsx'
 
 const SECTIONS = [
-  { id:'summary',    label:'Executive Summary'       },
+  { id:'summary',    label:'Overview Summary'        },
   { id:'problem',    label:'Problem Statement'       },
   { id:'data',       label:'Data Sources'            },
   { id:'metrics',    label:'KPI Calculations'        },
@@ -65,7 +65,7 @@ export default function Documentation({ audienceMode }) {
 
           {active === 'summary' && (
             <div className="doc-section">
-              <h3>Executive Summary</h3>
+              <h3>Overview Summary</h3>
               <p>
                 Elessar is a procurement and financial analytics platform for public hospitals in Hungary.
                 The platform ingests data from existing hospital information systems (CT-Ecostat, Medworks,

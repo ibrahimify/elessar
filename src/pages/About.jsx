@@ -27,7 +27,7 @@ export default function About() {
         <MetricCard
           label="Audience modes"
           value="2"
-          description="Executive and Analyst modes keep the same data but change the interpretation depth."
+          description="Overview and Analyst views keep the same data but change the interpretation depth."
           tone="blue"
           status="Clarity"
         />
@@ -67,7 +67,7 @@ export default function About() {
           <span>02</span>
           <h3>Built for leadership and analysts</h3>
           <p>
-            Executive Mode simplifies the meaning of the numbers. Analyst Mode keeps the tables,
+            Overview View simplifies the meaning of the numbers. Analyst View keeps the tables,
             formulas, benchmarks, and methodology needed for serious review.
           </p>
         </GlassCard>

@@ -11,7 +11,7 @@ const fmt = (n) => new Intl.NumberFormat('hu-HU').format(Math.round(n))
 const fmtM = (n) => (n / 1000000).toFixed(1) + 'M'
 
 const CAT_COLORS = {
-  Implant:     '#38BDF8',
+  Implant:     '#74C985',
   Consumable:  '#0F766E',
   Anaesthetic: '#F59E0B',
   Imaging:     '#64748B',
@@ -108,7 +108,7 @@ export default function Procurement({ audienceMode }) {
       {!analyst && (
         <BriefingPanel
           tone="blue"
-          eyebrow="Executive interpretation"
+          eyebrow="Overview interpretation"
           title="Procurement savings are concentrated in a small number of fixable patterns."
           body="The highest-value work is SKU consolidation, urgent order reduction, and enforcing contracted pricing. The analyst view keeps the full SKU register for procurement teams."
         />
@@ -149,7 +149,7 @@ export default function Procurement({ audienceMode }) {
                 ]}
               />
               <Bar dataKey="total_spend" name="total_spend" fill="rgba(56,189,248,0.24)" radius={[0,2,2,0]} />
-              <Bar dataKey="saving" name="saving" fill="#38BDF8" radius={[0,2,2,0]} />
+              <Bar dataKey="saving" name="saving" fill="#74C985" radius={[0,2,2,0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>

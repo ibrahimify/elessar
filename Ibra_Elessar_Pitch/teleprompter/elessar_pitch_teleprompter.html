@@ -1,0 +1,413 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: transparent; }
+
+.wrap { font-family: var(--font-sans); padding: 1.5rem 1.5rem 2rem; }
+
+.top-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+.total-timer {
+  font-size: 28px; font-weight: 500; color: var(--color-text-primary);
+  font-variant-numeric: tabular-nums; letter-spacing: -0.5px;
+}
+.total-timer.warn { color: #CC0000; }
+.controls { display: flex; gap: 8px; }
+.btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 13px; padding: 6px 14px;
+  border-radius: var(--border-radius-md);
+  border: 0.5px solid var(--color-border-secondary);
+  background: transparent; color: var(--color-text-secondary);
+  cursor: pointer; font-family: var(--font-sans);
+  transition: background 0.12s;
+}
+.btn:hover { background: var(--color-background-secondary); }
+.btn.primary { border-color: #CC0000; color: #CC0000; }
+.btn.primary:hover { background: #fff0f0; }
+
+.progress-bar {
+  height: 3px; background: var(--color-border-tertiary);
+  border-radius: 2px; margin-bottom: 1.5rem; overflow: hidden;
+}
+.progress-fill {
+  height: 100%; background: #CC0000;
+  width: 0%; transition: width 0.5s linear;
+}
+
+.slide-nav {
+  display: flex; gap: 6px; margin-bottom: 1.25rem; flex-wrap: wrap;
+}
+.slide-dot {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 0.5px solid var(--color-border-tertiary);
+  background: var(--color-background-secondary);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; color: var(--color-text-tertiary);
+  cursor: pointer; transition: all 0.12s; font-weight: 500;
+}
+.slide-dot.active {
+  background: #CC0000; color: #fff; border-color: #CC0000;
+}
+.slide-dot.done {
+  background: var(--color-background-primary);
+  color: var(--color-text-secondary);
+  border-color: var(--color-border-secondary);
+}
+
+.slide-card {
+  background: var(--color-background-primary);
+  border: 0.5px solid var(--color-border-tertiary);
+  border-radius: var(--border-radius-lg);
+  padding: 1.25rem 1.5rem 1.5rem;
+  margin-bottom: 1rem;
+}
+.slide-header {
+  display: flex; align-items: baseline;
+  justify-content: space-between; margin-bottom: 0.75rem;
+}
+.slide-name { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--color-text-tertiary); }
+.slide-duration {
+  font-size: 13px; font-weight: 500; color: #CC0000;
+  font-variant-numeric: tabular-nums;
+}
+.slide-timer-bar {
+  height: 2px; background: var(--color-border-tertiary);
+  border-radius: 1px; margin-bottom: 1rem; overflow: hidden;
+}
+.slide-timer-fill {
+  height: 100%; background: #CC0000; width: 100%;
+  transition: width 1s linear;
+}
+
+.script-text {
+  font-size: 15px; line-height: 1.85;
+  color: var(--color-text-primary);
+  white-space: pre-wrap;
+}
+.script-text em { font-style: normal; color: #CC0000; font-weight: 500; }
+
+.tone-tag {
+  display: inline-block; font-size: 11px;
+  padding: 2px 8px; border-radius: 20px;
+  background: var(--color-background-secondary);
+  border: 0.5px solid var(--color-border-tertiary);
+  color: var(--color-text-secondary);
+  margin-bottom: 0.75rem;
+}
+
+.next-hint {
+  font-size: 12px; color: var(--color-text-tertiary);
+  margin-top: 1rem; display: flex; align-items: center; gap: 6px;
+}
+
+.finished-msg {
+  text-align: center; padding: 2rem 1rem;
+  font-size: 18px; font-weight: 500;
+  color: var(--color-text-primary); display: none;
+}
+.finished-msg span { color: #CC0000; }
+</style>
+
+<div class="wrap">
+<h2 class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden">Elessar pitch teleprompter — 3 minute timer with slide-by-slide script</h2>
+
+<div class="top-bar">
+  <div class="total-timer" id="total-timer">3:00</div>
+  <div class="controls">
+    <button class="btn primary" id="main-btn" onclick="togglePitch()">
+      <i class="ti ti-player-play" aria-hidden="true" style="font-size:14px"></i> Start pitch
+    </button>
+    <button class="btn" onclick="resetPitch()">
+      <i class="ti ti-refresh" aria-hidden="true" style="font-size:14px"></i> Reset
+    </button>
+  </div>
+</div>
+
+<div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+
+<div class="slide-nav" id="slide-nav"></div>
+
+<div id="slide-card-wrap"></div>
+<div class="finished-msg" id="finished-msg">
+  Pitch complete. <span>Now shut up and let the silence work.</span>
+</div>
+</div>
+
+<script>
+const slides = [
+  {
+    id: "00",
+    name: "The silence",
+    seconds: 12,
+    tone: "Dead still. Don't move.",
+    script: `[Black screen. Say nothing.]
+
+[Count to 8 in your head. Slowly.]
+
+[At exactly 8 seconds:]
+
+"That is how long it takes a hospital to lose 300,000 forints."
+
+[One beat. Then:]
+
+"We timed it."
+
+[Advance slide. Immediately.]`,
+    hint: "Someone will try to fill the silence. Don't let them."
+  },
+  {
+    id: "01",
+    name: "The wound",
+    seconds: 25,
+    tone: "Quiet. Factual. Let it land.",
+    script: `"Every hospital in Hungary exports their financial data. Every month. Automatically.
+
+The systems work perfectly.
+
+A data analyst we interviewed confirmed it — the exports run, the numbers are accurate, everything is there.
+
+Nobody opens them.
+
+The money is not lost because the system is broken.
+
+The money is lost because no one can read what the system is saying."`,
+    hint: "Do not rush. Each sentence is a separate thought."
+  },
+  {
+    id: "02",
+    name: "The number",
+    seconds: 30,
+    tone: "Let the number breathe. Don't explain it twice.",
+    script: `"We built a financial model using Semmelweis University Hospital's 2024 public data.
+
+One department.
+
+110 million forints — gone. Not stolen. Not mismanaged.
+
+Just invisible.
+
+[Wait 2 seconds while the number counts up on screen.]
+
+Hungary has 163 hospitals.
+
+If the pattern holds — and we have reason to believe it does — the system loses roughly 8 billion forints a year.
+
+Not because anyone did anything wrong.
+
+Because the data speaks a language nobody translated."`,
+    hint: "Say 'if the pattern holds' — it's honest and it's stronger than fake precision."
+  },
+  {
+    id: "03",
+    name: "The insight",
+    seconds: 28,
+    tone: "Sharp. Confident. This is the thing nobody else saw.",
+    script: `"Here is what we figured out that nobody built a product around.
+
+The problem was never collecting the data. That part works fine.
+
+The problem is that a hospital CFO and a hospital procurement analyst need completely different answers from the exact same numbers.
+
+A CFO needs to know: which departments are bleeding?
+
+An analyst needs to know: which products are we buying in too many small batches?
+
+Same data. Totally different question. Totally different view.
+
+Every generic tool makes you choose one.
+
+Elessar gives you both. One upload."`,
+    hint: "Pause after 'One upload.' That's the payoff line."
+  },
+  {
+    id: "04",
+    name: "The proof",
+    seconds: 30,
+    tone: "Calm. Almost bored. Like showing a product is normal.",
+    script: `"We don't have a live hospital yet. I want to be upfront about that.
+
+What we do have is a working product you can open right now.
+
+[Pause.]
+
+Scan that code. Open it on your phone while we keep talking.
+
+Executive view. Analyst view. Same data feeding both.
+
+This is not a mockup. It is not a screenshot.
+
+It is the actual product, running on synthetic data we calibrated from real hospital financials and expert interviews.
+
+Go ahead. Open it."
+
+[Hold for 10 seconds. Stay quiet. Let them scan.]`,
+    hint: "The 10-second pause here is not awkward. It is power. Hold it."
+  },
+  {
+    id: "05",
+    name: "The machine",
+    seconds: 25,
+    tone: "Simple. Like explaining to a smart 12-year-old.",
+    script: `"Here is how it works — and it is simpler than you think.
+
+Hospitals already have the data sitting in their systems. They export a CSV file — something they already do every month.
+
+They upload it to Elessar. No installation. No IT department. No six-month project.
+
+We run it through Hungarian NEAK billing logic — which is the specific calculation system every hospital in this country uses — and we split it into two views.
+
+Leadership sees the big picture. Finance sees the detail.
+
+That is the entire product. Four steps. One upload. Two answers."`,
+    hint: "NEAK DRG — don't explain it deeply, just name it. The doctors in the room will nod."
+  },
+  {
+    id: "06",
+    name: "Why us. Why now.",
+    seconds: 30,
+    tone: "Grounded. Not arrogant. Just honest.",
+    script: `"Global software companies will not build this.
+
+Not because it is hard. Because Hungary has 163 hospitals. That is too small a market for SAP. Too specific for PowerBI. Too much Hungarian regulation for anyone outside this country to care about.
+
+We already built it.
+
+Six months of work. The NEAK logic is in the system. We have real hospital connections through our network. The domain knowledge is done.
+
+The window is open right now because nobody else is walking through it.
+
+[One beat. Look into the camera.]
+
+163 hospitals."
+
+[Stop. Say nothing else.]`,
+    hint: "End on '163 hospitals.' Do not add another sentence. The silence is the close."
+  }
+];
+
+const TOTAL = 180;
+let currentSlide = 0;
+let running = false;
+let totalElapsed = 0;
+let slideElapsed = 0;
+let interval = null;
+
+function pad(n) { return String(Math.floor(n)).padStart(2,'0'); }
+function fmt(s) { return `${pad(s/60)}:${pad(s%60)}`; }
+
+function renderNav() {
+  const nav = document.getElementById('slide-nav');
+  nav.innerHTML = '';
+  slides.forEach((s,i) => {
+    const d = document.createElement('div');
+    d.className = 'slide-dot' + (i===currentSlide?' active':i<currentSlide?' done':'');
+    d.textContent = s.id;
+    d.onclick = () => { if(!running){ jumpTo(i); } };
+    nav.appendChild(d);
+  });
+}
+
+function renderCard() {
+  const s = slides[currentSlide];
+  const remaining = Math.max(0, s.seconds - slideElapsed);
+  const pct = Math.max(0, (remaining / s.seconds) * 100);
+
+  const scriptHtml = s.script
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/\[([^\]]+)\]/g, '<em>[$1]</em>');
+
+  document.getElementById('slide-card-wrap').innerHTML = `
+    <div class="slide-card">
+      <div class="slide-header">
+        <span class="slide-name">Slide ${s.id} — ${s.name}</span>
+        <span class="slide-duration" id="slide-time">${fmt(remaining)}</span>
+      </div>
+      <div class="slide-timer-bar"><div class="slide-timer-fill" id="slide-fill" style="width:${pct}%"></div></div>
+      <span class="tone-tag">${s.tone}</span>
+      <div class="script-text" id="script-body">${scriptHtml}</div>
+      ${s.hint ? `<div class="next-hint"><i class="ti ti-info-circle" aria-hidden="true" style="font-size:14px"></i> ${s.hint}</div>` : ''}
+    </div>
+  `;
+}
+
+function updateTimers() {
+  const totalRemaining = Math.max(0, TOTAL - totalElapsed);
+  const el = document.getElementById('total-timer');
+  el.textContent = fmt(totalRemaining);
+  el.className = 'total-timer' + (totalRemaining <= 30 ? ' warn' : '');
+
+  const pct = (totalElapsed / TOTAL) * 100;
+  document.getElementById('progress-fill').style.width = pct + '%';
+
+  const s = slides[currentSlide];
+  const slideRemaining = Math.max(0, s.seconds - slideElapsed);
+  const slideEl = document.getElementById('slide-time');
+  const slideFill = document.getElementById('slide-fill');
+  if(slideEl) slideEl.textContent = fmt(slideRemaining);
+  if(slideFill) slideFill.style.width = Math.max(0,(slideRemaining/s.seconds)*100)+'%';
+}
+
+function tick() {
+  totalElapsed++;
+  slideElapsed++;
+
+  updateTimers();
+
+  if(slideElapsed >= slides[currentSlide].seconds) {
+    if(currentSlide < slides.length - 1) {
+      currentSlide++;
+      slideElapsed = 0;
+      renderNav();
+      renderCard();
+    }
+  }
+
+  if(totalElapsed >= TOTAL) {
+    clearInterval(interval);
+    running = false;
+    document.getElementById('main-btn').innerHTML = '<i class="ti ti-player-play" aria-hidden="true" style="font-size:14px"></i> Start pitch';
+    document.getElementById('finished-msg').style.display = 'block';
+  }
+}
+
+function togglePitch() {
+  if(running) {
+    clearInterval(interval);
+    running = false;
+    document.getElementById('main-btn').innerHTML = '<i class="ti ti-player-play" aria-hidden="true" style="font-size:14px"></i> Resume';
+  } else {
+    document.getElementById('finished-msg').style.display = 'none';
+    running = true;
+    document.getElementById('main-btn').innerHTML = '<i class="ti ti-player-pause" aria-hidden="true" style="font-size:14px"></i> Pause';
+    interval = setInterval(tick, 1000);
+  }
+}
+
+function jumpTo(i) {
+  currentSlide = i;
+  slideElapsed = 0;
+  renderNav();
+  renderCard();
+}
+
+function resetPitch() {
+  clearInterval(interval);
+  running = false;
+  currentSlide = 0;
+  totalElapsed = 0;
+  slideElapsed = 0;
+  document.getElementById('main-btn').innerHTML = '<i class="ti ti-player-play" aria-hidden="true" style="font-size:14px"></i> Start pitch';
+  document.getElementById('total-timer').className = 'total-timer';
+  document.getElementById('total-timer').textContent = '3:00';
+  document.getElementById('progress-fill').style.width = '0%';
+  document.getElementById('finished-msg').style.display = 'none';
+  renderNav();
+  renderCard();
+}
+
+renderNav();
+renderCard();
+</script>

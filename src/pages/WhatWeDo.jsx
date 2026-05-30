@@ -48,6 +48,36 @@ export default function WhatWeDo() {
           </GlassCard>
         ))}
       </div>
+
+      <div className="content-grid three">
+        <GlassCard className="story-card">
+          <span>Problem</span>
+          <h3>Public hospitals are asked to optimize without a shared operating picture.</h3>
+          <p>
+            Finance, procurement, clinical activity, and asset data often live in separate exports.
+            That fragmentation hides real cost drivers until they appear as budget pressure,
+            urgent orders, or reactive purchasing.
+          </p>
+        </GlassCard>
+        <GlassCard className="story-card">
+          <span>Solution</span>
+          <h3>Elessar creates an operational digital twin for cost intelligence.</h3>
+          <p>
+            The platform connects financial, clinical, supply-chain, and equipment signals into
+            one decision layer. It does not replace EHR systems. It explains operational cost,
+            procurement pressure, and resilience risk.
+          </p>
+        </GlassCard>
+        <GlassCard className="story-card">
+          <span>Model</span>
+          <h3>The product is built for ROI-driven public-sector healthcare.</h3>
+          <p>
+            The SaaS model can be sold to hospitals, regional health authorities, or public
+            healthcare networks, with modules tied to procurement, finance, equipment, and
+            operational planning.
+          </p>
+        </GlassCard>
+      </div>
     </>
   )
 }

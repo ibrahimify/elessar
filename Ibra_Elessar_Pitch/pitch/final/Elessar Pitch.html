@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elessar — Pitch</title>
+<style>
+  :root{
+    --bg:#F5F3EE;
+    --ink:#0A0A0A;
+    --red:#CC0000;
+    --gray:rgba(10,10,10,0.42);
+    --pad:120px;
+    --type-small:26px;
+    --type-foot:24px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{background:#0A0A0A;}
+  deck-stage:not(:defined){visibility:hidden;}
+
+  section{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:Arial, "Helvetica Neue", Helvetica, sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .frame{
+    width:100%;height:100%;
+    box-sizing:border-box;
+    padding:var(--pad);
+    display:flex;flex-direction:column;
+    overflow:hidden;
+  }
+  .ink{color:var(--ink);}
+  .red{color:var(--red);}
+  .gray{color:var(--gray);}
+
+  /* Type — two voices only: MASSIVE (Arial Black) and small (Arial) */
+  .black-face{font-family:"Arial Black", Arial, sans-serif; font-weight:900;
+    text-transform:uppercase; line-height:0.9; letter-spacing:-0.03em;}
+  .no-caps{text-transform:none;}
+  .small{font-size:var(--type-small); line-height:1.35; letter-spacing:0;}
+  .foot{font-size:var(--type-foot); line-height:1.4; color:var(--gray);}
+
+  /* Reveal system — JS toggles .show; resting state is always visible. */
+  .reveal{opacity:0; transition:opacity .55s ease, transform .5s cubic-bezier(.2,.7,.2,1);}
+  .reveal.from-left{transform:translateX(-34px);}
+  .reveal.from-right{transform:translateX(34px);}
+  .reveal.from-up{transform:translateY(20px);}
+  .reveal.from-top{transform:translateY(-46px);}
+  .reveal.scale-in{transform:scale(0.94);}
+  .reveal.snap{transition-duration:.13s; transition-timing-function:cubic-bezier(.7,0,.25,1);}
+  .reveal.show{opacity:1; transform:none;}
+
+  /* helpers */
+  .rule{border:0; border-top:2px solid var(--ink); width:100%; margin:0;}
+  .it{font-style:italic;}
+
+  /* ---------- 00 SILENCE ---------- */
+  .s-black{background:#0A0A0A;}
+  .frame--black{background:#0A0A0A;}
+
+  /* ---------- 01 THE WOUND ---------- */
+  .s01{justify-content:flex-end; align-items:flex-start; padding-bottom:64px;}
+  .s01 .mega{font-size:148px;}
+  .s01 .mega span{display:block;}
+  .s01-red{font-size:92px; margin-top:40px;}
+  .s01-red span{display:block;}
+
+  /* ---------- 02 THE NUMBER ---------- */
+  .s02{justify-content:space-between;}
+  .s02-top{display:flex;flex-direction:column;}
+  .s02-num-row{display:flex; align-items:flex-start; flex-wrap:nowrap;
+    white-space:nowrap; margin-left:-6px;}
+  .s02-num{font-size:280px; line-height:0.82; letter-spacing:-0.04em;}
+  .s02-unit{display:block; font-size:88px; margin-top:6px; line-height:0.9;}
+  .s02-cap{margin-top:26px;}
+  .s02-bottom{display:flex; flex-direction:column;}
+  .s02-foot{display:flex; gap:150px; margin-top:30px;}
+  .s02-fcol{display:flex; flex-direction:column;}
+  .s02-x{font-size:120px;}
+  .s02-flabel{margin-top:8px;}
+
+  /* ---------- 03 THE INSIGHT ---------- */
+  .s03{justify-content:space-between;}
+  .s03 .mega{font-size:200px;}
+  .s03 .mega .ink{margin-right:0.18em;}
+  .s03-split{display:flex; gap:160px; margin-top:10px;}
+  .s03-col{display:flex; flex-direction:column;}
+  .s03-col .col-h{font-size:96px;}
+  .s03-col .col-d{margin-top:14px;}
+  .s03-pay{font-size:60px;}
+
+  /* ---------- 04 THE PROOF ---------- */
+  .s04{justify-content:space-between; align-items:stretch;}
+  .s04 .mega{font-size:140px;}
+  .s04 .mega span{display:block;}
+  .s04-body{flex:1; display:flex; align-items:center; justify-content:flex-end;
+    min-height:0; padding:20px 0;}
+  .qr-block{width:520px; height:520px; margin-right:40px;}
+  #qrcode{width:100%; height:100%;}
+  #qrcode svg{display:block; width:100%; height:100%;}
+
+  /* ---------- 05 THE MACHINE ---------- */
+  .s05{justify-content:space-between;}
+  .s05-grid{display:grid; grid-template-columns:auto 1fr; column-gap:80px;
+    align-items:center; row-gap:0;}
+  .node-h{line-height:0.9;}
+  .s05 .n1{font-size:52px;}
+  .s05 .n2{font-size:76px;}
+  .s05 .n3{font-size:104px;}
+  .s05 .n4{font-size:148px; margin-left:-6px;}
+  .s05-arrow{color:var(--red); font-size:50px; line-height:1; font-weight:900;
+    padding:10px 0 10px 44px;}
+  .s05-ann{font-size:var(--type-small); line-height:1.35; max-width:760px;}
+  .s05-foot{display:flex; flex-direction:column; gap:24px;}
+  .s05-pay{font-size:54px; line-height:1.12; font-family:"Arial Black",Arial,sans-serif;
+    font-weight:900; text-transform:uppercase; letter-spacing:-0.02em;}
+  .s05-pay span{display:block;}
+
+  /* ---------- 06 WHY YOU ---------- */
+  .s06{justify-content:space-between;}
+  .s06-head{display:flex; flex-direction:column;}
+  .s06-global{display:block; font-size:52px; line-height:1;}
+  .s06-vendors{display:block; font-size:116px; line-height:0.96; margin-top:6px;}
+  .s06-wont{display:block; font-size:300px; line-height:0.78; letter-spacing:-0.05em;
+    margin-top:4px; margin-left:-0.02em;}
+  .s06-already{display:block; font-family:Arial, sans-serif; font-weight:400;
+    text-transform:none; letter-spacing:0; font-size:40px; line-height:1.1; margin-top:14px;}
+  .s06-rows{display:flex; flex-direction:column;}
+  .s06-row{display:grid; grid-template-columns:280px 1fr; gap:56px;
+    padding:16px 0; border-bottom:1px solid rgba(10,10,10,0.14);}
+  .s06-row:first-of-type{border-top:1px solid rgba(10,10,10,0.14);}
+  .row-label{font-size:24px; font-weight:700; color:var(--red); letter-spacing:0.03em;
+    text-transform:uppercase; font-family:"Arial Black",Arial,sans-serif;}
+  .row-desc{font-size:24px; line-height:1.3; color:var(--ink);}
+  .s06-ask{margin-top:26px; font-size:30px; font-weight:700; color:var(--ink);}
+
+  /* ---------- 07 THE HOLD ---------- */
+  .s07{position:relative; padding:0; background:var(--bg); overflow:hidden;}
+  .s07-num{position:absolute; left:18px; top:20px; margin:0;
+    font-size:1180px; line-height:0.72; color:var(--red); white-space:nowrap;
+    letter-spacing:-0.05em;}
+  .s07-logo{position:absolute; top:60px; left:84px; width:84px; height:auto; z-index:3;}
+  .s07-stamp{position:absolute; top:50%; left:53%; transform:translate(-50%,-50%);
+    background:#FFFFFF; padding:26px; width:430px; height:430px; z-index:2;
+    display:flex; align-items:center; justify-content:center;}
+  .s07-stamp #qrcode-inv{width:100%; height:100%;}
+  .s07-stamp svg{display:block; width:100%; height:100%;}
+  .s07-meta{position:absolute; left:84px; bottom:68px; z-index:3;
+    display:flex; flex-direction:column; gap:4px;}
+  .s07-meta span{color:var(--ink); font-family:Arial, sans-serif; font-weight:400;
+    font-size:26px; line-height:1.3;}
+</style>
+</head>
+<body>
+<deck-stage width="1920" height="1080">
+
+  <!-- 00 — SILENCE -->
+  <section data-label="00" class="s-black">
+    <div class="frame frame--black"></div>
+  </section>
+
+  <!-- 01 — THE WOUND -->
+  <section data-label="01">
+    <div class="frame s01">
+      <h1 class="mega black-face ink">
+        <span>The export</span>
+        <span>runs every</span>
+        <span>month.</span>
+      </h1>
+      <p class="s01-red black-face red reveal" data-delay="1500">
+        <span>No one knows</span>
+        <span>what it says.</span>
+      </p>
+    </div>
+  </section>
+
+  <!-- 02 — THE NUMBER -->
+  <section data-label="02">
+    <div class="frame s02">
+      <div class="s02-top">
+        <div class="s02-num-row">
+          <span class="s02-num black-face red" id="bigNumber">110,000,000</span>
+        </div>
+        <span class="s02-unit black-face ink no-caps">Ft</span>
+        <p class="s02-cap small gray it">one department. one hospital. our model.</p>
+      </div>
+      <div class="s02-bottom">
+        <hr class="rule">
+        <div class="s02-foot">
+          <div class="s02-fcol">
+            <span class="s02-x black-face ink">×163</span>
+            <span class="s02-flabel small gray">hospitals in Hungary</span>
+          </div>
+          <div class="s02-fcol">
+            <span class="s02-x black-face red no-caps">~8B&nbsp;Ft</span>
+            <span class="s02-flabel small gray it">if the pattern holds</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 — THE INSIGHT -->
+  <section data-label="03">
+    <div class="frame s03">
+      <h1 class="mega black-face"><span class="ink">Same</span><span class="red">data.</span></h1>
+      <div class="s03-split">
+        <div class="s03-col l reveal from-left" data-delay="700">
+          <span class="col-h black-face ink">CFO</span>
+          <span class="col-d small gray">sees strategy.</span>
+        </div>
+        <div class="s03-col r reveal from-right" data-delay="700">
+          <span class="col-h black-face red">Analyst</span>
+          <span class="col-d small gray">sees waste.</span>
+        </div>
+      </div>
+      <p class="s03-pay black-face ink reveal" data-delay="1300">One upload.</p>
+    </div>
+  </section>
+
+  <!-- 04 — THE PROOF -->
+  <section data-label="04">
+    <div class="frame s04">
+      <h1 class="mega black-face ink">
+        <span>Open it</span>
+        <span class="red reveal snap" data-delay="500">now.</span>
+      </h1>
+      <div class="s04-body">
+        <div class="qr-block reveal" data-delay="850"><div id="qrcode"></div></div>
+      </div>
+      <p class="foot it">Synthetic data · Semmelweis 2024 public financials · domain expert interviews</p>
+    </div>
+  </section>
+
+  <!-- 05 — THE MACHINE -->
+  <section data-label="05">
+    <div class="frame s05">
+      <div class="s05-grid">
+        <span class="node-h n1 black-face ink reveal from-up" data-delay="200">Export</span>
+        <span class="s05-ann gray reveal" data-delay="260">CT-Ecostat, Medworks, procurement CSV</span>
+
+        <span class="s05-arrow reveal from-up" data-delay="520">&#8595;</span>
+        <span></span>
+
+        <span class="node-h n2 black-face ink reveal from-up" data-delay="760">Upload</span>
+        <span class="s05-ann gray reveal" data-delay="820">Elessar web platform &mdash; no installation</span>
+
+        <span class="s05-arrow reveal from-up" data-delay="1080">&#8595;</span>
+        <span></span>
+
+        <span class="node-h n3 black-face ink reveal from-up" data-delay="1320">Compute</span>
+        <span class="s05-ann gray reveal" data-delay="1380"><span class="red">NEAK DRG logic</span>, per-procedure deficit, SKU fragmentation</span>
+
+        <span class="s05-arrow reveal from-up" data-delay="1640">&#8595;</span>
+        <span></span>
+
+        <span class="node-h n4 black-face ink reveal from-up" data-delay="1880">Decide</span>
+        <span class="s05-ann gray reveal" data-delay="1940">Executive view + Analyst view</span>
+      </div>
+      <div class="s05-foot reveal from-up" data-delay="2320">
+        <hr class="rule">
+        <p class="s05-pay">
+          <span class="ink">No installation. No IT project.</span>
+          <span class="red">Works with what they already have.</span>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 — WHY YOU. WHY NOW. -->
+  <section data-label="06">
+    <div class="frame s06">
+      <div class="s06-head">
+        <span class="s06-global black-face ink">Global</span>
+        <span class="s06-vendors black-face ink">vendors</span>
+        <span class="s06-wont black-face red reveal from-top snap" data-delay="450">won't.</span>
+        <span class="s06-already reveal" data-delay="950">We already did.</span>
+      </div>
+      <div class="s06-rows">
+        <div class="s06-row">
+          <span class="row-label">NEAK DRG</span>
+          <span class="row-desc">Hungarian hospital billing logic built in. PowerBI doesn't have it. SAP doesn't have it. We do.</span>
+        </div>
+        <div class="s06-row">
+          <span class="row-label">Network</span>
+          <span class="row-desc">Real hospital relationships through EPC Healthcare. Not a cold door.</span>
+        </div>
+        <div class="s06-row">
+          <span class="row-label">6 Months</span>
+          <span class="row-desc">Domain ontology, data mappings, validation rules. The boring work nobody wants to do twice.</span>
+        </div>
+        <p class="s06-ask">[ The ask — amount · what it buys · the milestone it reaches ]</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 — THE HOLD -->
+  <section data-label="07">
+    <div class="frame s07">
+      <span class="s07-num black-face red no-caps">110,000,000</span>
+      <img class="s07-logo" src="assets/elessar-logo.png" alt="Elessar">
+      <div class="s07-stamp"><div id="qrcode-inv"></div></div>
+      <div class="s07-meta">
+        <span>163 hospitals.</span>
+        <span>elessar-xi.vercel.app/auth</span>
+      </div>
+    </div>
+  </section>
+
+</deck-stage>
+
+<script src="https://unpkg.com/qrcode-generator@1.4.4/qrcode.js"></script>
+<script src="deck-stage.js"></script>
+<script>
+(function(){
+  var QR_URL = "https://elessar-xi.vercel.app/auth";
+
+  function buildQRSvg(color){
+    var qr = qrcode(0, 'M');
+    qr.addData(QR_URL);
+    qr.make();
+    var n = qr.getModuleCount();
+    var m = 4;                  // quiet zone (modules)
+    var size = n + m * 2;
+    var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+size+' '+size+'" shape-rendering="crispEdges" preserveAspectRatio="xMidYMid meet">';
+    for(var r=0;r<n;r++){
+      for(var c=0;c<n;c++){
+        if(qr.isDark(r,c)){
+          svg += '<rect x="'+(c+m)+'" y="'+(r+m)+'" width="1.02" height="1.02" fill="'+color+'"/>';
+        }
+      }
+    }
+    svg += '</svg>';
+    return svg;
+  }
+
+  function renderQRs(){
+    if(!window.qrcode) return;
+    var a = document.getElementById('qrcode');        // slide 04 — black on off-white
+    if(a && !a.dataset.done){ a.innerHTML = buildQRSvg('#0A0A0A'); a.dataset.done = '1'; }
+    var b = document.getElementById('qrcode-inv');    // slide 07 — black on white stamp
+    if(b && !b.dataset.done){ b.innerHTML = buildQRSvg('#0A0A0A'); b.dataset.done = '1'; }
+  }
+
+  function countUp(el){
+    var target = 110000000, dur = 2500, start = null;
+    function fmt(v){ return Math.round(v).toLocaleString('en-US'); }
+    function step(ts){
+      if(start===null) start = ts;
+      var p = Math.min((ts-start)/dur, 1);
+      var eased = 1 - Math.pow(1-p, 3); // ease-out cubic
+      el.textContent = fmt(target*eased);
+      if(p<1) requestAnimationFrame(step);
+      else el.textContent = fmt(target);
+    }
+    el.textContent = "0";
+    requestAnimationFrame(step);
+    // Safety net: guarantee the final value even if rAF is throttled.
+    setTimeout(function(){ el.textContent = fmt(target); }, dur + 400);
+  }
+
+  function runReveals(slide){
+    var els = slide.querySelectorAll('.reveal');
+    els.forEach(function(el){
+      el.classList.remove('show');
+      el.style.transition = '';
+      el.style.opacity = '';
+      el.style.transform = '';
+      var d = parseInt(el.getAttribute('data-delay') || '0', 10);
+      setTimeout(function(){
+        if(slide.classList.contains('is-active')) el.classList.add('show');
+      }, d);
+      // Safety net: if the transition stalls (e.g. deck tab backgrounded
+      // during a screen-share), force the final visible state so content
+      // can never get stuck invisible.
+      setTimeout(function(){
+        if(slide.classList.contains('is-active')){
+          el.style.transition = 'none';
+          el.style.opacity = '1';
+          el.style.transform = 'none';
+        }
+      }, d + 1100);
+    });
+  }
+
+  function onActive(slide){
+    if(!slide) return;
+    var num = slide.querySelector('#bigNumber');
+    if(num) countUp(num);
+    if(slide.querySelector('#qrcode') || slide.querySelector('#qrcode-inv')) renderQRs();
+    runReveals(slide);
+  }
+
+  // Try render QRs as soon as lib + DOM are ready (also handled on activation)
+  window.addEventListener('load', function(){ renderQRs(); });
+
+  var stage = document.querySelector('deck-stage');
+  function wire(){
+    stage = document.querySelector('deck-stage');
+    if(!stage){ requestAnimationFrame(wire); return; }
+    stage.addEventListener('slidechange', function(e){
+      var slides = stage.children;
+      for(var i=0;i<slides.length;i++) slides[i].classList.remove('is-active');
+      if(e.detail.slide){
+        e.detail.slide.classList.add('is-active');
+        onActive(e.detail.slide);
+      }
+    });
+  }
+  wire();
+})();
+</script>
+</body>
+</html>

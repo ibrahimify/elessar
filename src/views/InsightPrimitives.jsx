@@ -38,7 +38,7 @@ export function SignalStrip({ items }) {
 export function ModeNote({ audienceMode, analystText, executiveText }) {
   return (
     <div className="mode-note">
-      <span>{audienceMode === 'analyst' ? 'Analyst lens' : 'Executive lens'}</span>
+      <span>{audienceMode === 'analyst' ? 'Analyst lens' : 'Overview lens'}</span>
       {audienceMode === 'analyst' ? analystText : executiveText}
     </div>
   )

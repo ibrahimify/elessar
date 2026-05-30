@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400" shape-rendering="geometricPrecision">
+  <title>Elessar gem</title>
+  
+  <g>
+    
+    <polygon points="200,149 200,197 150,197" fill="#079669"></polygon>
+    
+    <polygon points="200,149 248,197 200,197" fill="#34d399"></polygon>
+    
+    <polygon points="150,197 200,197 200,230" fill="#079669"></polygon>
+    
+    <polygon points="200,197 248,197 200,230" fill="#34d399"></polygon>
+    
+    <polygon points="150,197 200,230 200,280" fill="#10b982"></polygon>
+    
+    <polygon points="200,230 248,197 200,280" fill="#10b982"></polygon>
+  </g>
+</svg>
